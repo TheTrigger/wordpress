@@ -6,6 +6,8 @@ RUN apt-get clean -y
 RUN docker-php-ext-install soap
 RUN docker-php-ext-install zip
 
+COPY custom.ini /usr/local/etc/php/conf.d/custom.ini
+
 # ping crontab
 RUN echo "* * * * * wget -q -O - http://127.0.0.1/wp-cron.php?doing_wp_cron >/dev/null 2>&1" >> /tmp/tmpcron
 RUN crontab -u www-data /tmp/tmpcron
