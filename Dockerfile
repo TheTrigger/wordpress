@@ -2,14 +2,15 @@ FROM wordpress:php7.4-apache
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -y && \
-	apt-get install -y apt-utils libxml2-dev zip libzip-dev wget cron && \
+	apt-get install -y apt-utils libxml2-dev zip libzip-dev wget cron libapache2-mod-security2 && \
 	apt-get clean -y && \
 	docker-php-ext-install soap zip
 
 COPY custom.ini /usr/local/etc/php/conf.d/custom.ini
+COPY ssl.conf /etc/apache2/mods-available/ssl.conf
 
 # enable self signed ssl
-RUN a2enmod ssl
+RUN a2enmod rewrite ssl security2
 
 # ping crontab
 RUN echo "* * * * * wget -q -O - http://127.0.0.1/wp-cron.php?doing_wp_cron >/dev/null 2>&1" >> /tmp/tmpcron && \
