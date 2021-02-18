@@ -36,6 +36,8 @@ RUN a2ensite default-ssl
 RUN echo "* * * * * curl http://127.0.0.1/wp-cron.php?doing_wp_cron" >> /tmp/tmpcron && \
 	crontab -u www-data /tmp/tmpcron && rm /tmp/tmpcron
 
+RUN chmod +x startup.sh
+
 ENTRYPOINT ["startup.sh"]
 CMD ["apache2-foreground"]
 
