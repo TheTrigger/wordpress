@@ -1,46 +1,34 @@
-FROM wordpress:php7.4-apache
+FROM wordpress:php8.3-fpm-alpine
 
-ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update -y && \
-	apt-get install -y nano apt-utils libxml2-dev zip libzip-dev wget cron libapache2-mod-security2 && \
-	apt-get clean -y && \
-	docker-php-ext-install soap zip && \
-	rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache \
+	libpng \
+	libjpeg-turbo \
+	freetype \
+	libzip
+
+RUN apk add --no-cache nano libxml2 libxml2-dev zip libzip libzip-dev wget dcron
+
+RUN docker-php-ext-install zip opcache mysqli pdo pdo_mysql soap
+#RUN docker-php-ext-install sockets
+
+RUN docker-php-ext-enable opcache
+#RUN docker-php-ext-enable opcache sockets
 
 COPY custom.ini /usr/local/etc/php/conf.d/custom.ini
 COPY startup.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/startup.sh
 
-COPY default-ssl.conf /etc/apache2/sites-available/
-#COPY ssl.conf /etc/apache2/mods-available/ssl.conf
-
-## SSL local dev
-
-# non funzionerebbe a causa del nome dominio
-RUN mkdir -p /etc/apache2/ssl/
-RUN openssl req -new -newkey rsa:4096 -days 3650 -nodes -x509 -subj \
-	"/C=IT/ST=FC/L=CESENA/O=OIBI.DEV/CN=localhost" \
-	-keyout /etc/apache2/ssl/ssl.key -out /etc/apache2/ssl/ssl.crt
-
-# trusted cert but no luck with domain names
-#RUN cp /etc/apache2/ssl/ssl.crt /usr/local/share/ca-certificates/
-#RUN update-ca-certificates
-
-## END SSL
-
-RUN echo "insecure" >> $HOME/.curlrc
-
-## enable self signed ssl
-RUN a2enmod rewrite ssl security2
-RUN a2ensite default-ssl
+# Installazione di WP CLI
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+	&& chmod +x wp-cli.phar \
+	&& mv wp-cli.phar /usr/local/bin/wp
 
 # ping crontab
-RUN echo "* * * * * curl http://127.0.0.1/wp-cron.php?doing_wp_cron" >> /tmp/tmpcron && \
-	crontab -u www-data /tmp/tmpcron && rm /tmp/tmpcron
+RUN echo "* * * * * wp cron event run --due-now --path=/var/www/html" | crontab -u www-data -
 
-
-ENTRYPOINT ["startup.sh"]
-CMD ["apache2-foreground"]
+#RUN chown -R www-data:www-data /var/www/html
+USER www-data
+WORKDIR /var/www/html
 
 ARG MAINTAINER
 ARG BUILD_DATE
