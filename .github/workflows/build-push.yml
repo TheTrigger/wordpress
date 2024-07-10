@@ -8,7 +8,6 @@ on:
 env:
   REGISTRY: registry.oibi.dev
   IMAGE_NAME: ${{ github.repository }}
-  IMAGE_NAME_LOWER: ${{ github.repository_owner }}-${{ github.event.repository.name }}
   BRANCH_NAME: ${{ github.base_ref || github.ref_name }}
 
 jobs:
@@ -17,6 +16,12 @@ jobs:
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
+        
+      - name: Set Environment Variables
+        run: |
+          echo "BUILD_DATE=$(date --utc +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
+          echo "BUILD_VERSION=$(date --utc +'%Y.%m.%d.%H%M')" >> $GITHUB_ENV
+          echo "IMAGE_NAME_LOWER=$(echo '${{ github.repository }}' | cut -d '/' -f 2 | awk '{print tolower($0)}')" >> $GITHUB_ENV
 
       - name: Login to Docker Registry
         uses: docker/login-action@v3
