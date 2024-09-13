@@ -1,8 +1,8 @@
 FROM wordpress:php8.3-fpm-alpine
 
-RUN apk add --no-cache libpng libjpeg-turbo freetype nano libxml2 libxml2-dev zip libzip libzip-dev wget dcron curl-dev
+RUN apk add --no-cache libpng libjpeg-turbo freetype nano libxml2 libxml2-dev zip libzip libzip-dev wget dcron
 
-RUN docker-php-ext-install zip opcache mysqli pdo pdo_mysql soap curl
+RUN docker-php-ext-install zip opcache mysqli pdo pdo_mysql soap
 #RUN docker-php-ext-install sockets
 
 RUN docker-php-ext-enable opcache

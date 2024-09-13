@@ -1,4 +1,5 @@
 #!/bin/sh
 
-cron
-docker-entrypoint.sh "$@"
+cron -f &
+
+exec docker-entrypoint.sh "$@"
