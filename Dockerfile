@@ -1,6 +1,6 @@
 FROM wordpress:php8.3-fpm-alpine
 
-RUN apk add --no-cache libpng libjpeg-turbo freetype nano libxml2 libxml2-dev zip libzip libzip-dev wget
+RUN apk add --no-cache libpng libjpeg-turbo freetype nano libxml2 libxml2-dev zip libzip libzip-dev supercronic
 
 RUN docker-php-ext-install zip opcache mysqli pdo pdo_mysql soap
 
