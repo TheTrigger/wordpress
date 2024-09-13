@@ -2,4 +2,4 @@
 
 supercronic /home/www-data/crontab &
 
-exec docker-entrypoint.sh "$@" || true
+exec docker-entrypoint.sh "$@"
