@@ -15,12 +15,14 @@ services:
            define('WP_SITEURL', 'https://${SITE_DOMAIN}');
            define('WP_HOME', 'https://${SITE_DOMAIN}');
            define('WP_CACHE', true);
+           define('WP_REDIS_HOST', 'redis');
 #           define('WP_DEBUG_LOG', true);
     depends_on:
       - database
     networks:
       - traefik2_default
       - database_network
+      - wordpress_network
 
   webserver:
     image: nginx:latest
@@ -38,11 +40,11 @@ services:
     depends_on:
       - wordpress
     networks:
+      - wordpress_network
       - traefik2_default
-      - database_network
 
   database:
-    image: mariadb:11.6
+    image: mariadb:11.5
     restart: unless-stopped
     volumes:
       - database_data:/var/lib/mysql
@@ -54,11 +56,19 @@ services:
     networks:
       - database_network
 
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    networks:
+      - wordpress_network
+
+
 volumes:
   wordpress_data:
   database_data:
 
 networks:
+  database_network:
+  wordpress_network:
   traefik2_default:
     external: true
-  database_network:
