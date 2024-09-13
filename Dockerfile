@@ -1,12 +1,6 @@
 FROM wordpress:php8.3-fpm-alpine
 
-RUN apk add --no-cache \
-	libpng \
-	libjpeg-turbo \
-	freetype \
-	libzip
-
-RUN apk add --no-cache nano libxml2 libxml2-dev zip libzip libzip-dev wget dcron
+RUN apk add --no-cache libpng libjpeg-turbo freetype nano libxml2 libxml2-dev zip libzip libzip-dev wget dcron
 
 RUN docker-php-ext-install zip opcache mysqli pdo pdo_mysql soap
 #RUN docker-php-ext-install sockets
@@ -23,10 +17,8 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 	&& chmod +x wp-cli.phar \
 	&& mv wp-cli.phar /usr/local/bin/wp
 
-# ping crontab
 RUN echo "* * * * * wp cron event run --due-now --path=/var/www/html" | crontab -u www-data -
 
-#RUN chown -R www-data:www-data /var/www/html
 USER www-data
 WORKDIR /var/www/html
 
