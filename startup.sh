@@ -1,5 +1,5 @@
 #!/bin/sh
 
-cron -f &
+supercronic /home/www-data/crontab &
 
 exec docker-entrypoint.sh "$@"
