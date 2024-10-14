@@ -1,8 +1,6 @@
 # Wordpress FPM + WP-CLI
 
-Built on <https://hub.docker.com/_/wordpress>
-
-Ci credi? Se .git revert ci vuole -> `dos2unix`
+Built over <https://hub.docker.com/_/wordpress>
 
 
 # Build
@@ -10,3 +8,25 @@ Ci credi? Se .git revert ci vuole -> `dos2unix`
 ```sh
 docker build -t wordpress:fpm .
 ```
+
+
+# Fixes
+
+## FTP
+
+<https://github.com/docker-library/php/issues/1488#issuecomment-1906738878>
+
+```sh
+FROM php:8.2
+
+RUN apt-get update && apt-get install -y libssl-dev
+
+RUN docker-php-ext-configure ftp --with-openssl-dir=/usr \
+	&& docker-php-ext-install ftp
+```
+
+
+
+## Git revert
+
+Se .git revert potrebbe essere necessario -> `dos2unix`
