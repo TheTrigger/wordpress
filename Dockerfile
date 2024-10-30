@@ -6,7 +6,7 @@ RUN docker-php-ext-install zip opcache mysqli pdo pdo_mysql soap curl ftp
 
 RUN docker-php-ext-enable ftp
 
-COPY custom.ini /usr/local/etc/php/conf.d/custom.ini
+COPY php/custom.ini /usr/local/etc/php/conf.d/custom.ini
 COPY startup.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/startup.sh
 
@@ -17,7 +17,7 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 
 USER www-data
 
-RUN echo "* * * * * wp cron event run --due-now --path=/var/www/html" > /home/www-data/crontab
+RUN echo "* * * * * php -d open_basedir=/ -d disable_functions= /usr/local/bin/wp cron event run --due-now --path=/var/www/html" > /home/www-data/crontab
 
 WORKDIR /var/www/html
 
