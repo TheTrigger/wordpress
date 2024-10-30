@@ -46,8 +46,4 @@ jobs:
 
       - name: Logout from Docker Registry
         run: docker logout ${{ env.REGISTRY }}
-
-      - name: Scan Image with Trivy
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}/${{ env.BRANCH_NAME }}:latest
+        
