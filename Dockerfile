@@ -4,7 +4,7 @@ RUN apk add --no-cache libpng libjpeg-turbo freetype nano libxml2 libxml2-dev zi
 
 RUN docker-php-ext-install zip opcache mysqli pdo pdo_mysql soap curl ftp
 
-RUN docker-php-ext-enable opcache curl ftp
+RUN docker-php-ext-enable ftp
 
 COPY custom.ini /usr/local/etc/php/conf.d/custom.ini
 COPY startup.sh /usr/local/bin/
