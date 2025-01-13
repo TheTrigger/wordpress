@@ -11,12 +11,13 @@ services:
       WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
       WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
       WEBSERVER_HOST: webserver
+      WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-false}
       WORDPRESS_CONFIG_EXTRA: |
            define('WP_SITEURL', 'https://${SITE_DOMAIN}');
            define('WP_HOME', 'https://${SITE_DOMAIN}');
            define('WP_CACHE', true);
+           define('WP_POST_REVISIONS', 6);
            define('WP_REDIS_HOST', 'redis');
-#           define('WP_DEBUG_LOG', true);
     depends_on:
       - database
     networks:
@@ -31,7 +32,7 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.${CONFIG_KEY}_nginx.rule=Host(`${SITE_DOMAIN}`)"
+      - "traefik.http.routers.${CONFIG_KEY}_nginx.rule=Host(`${SITE_DOMAIN}`, `www.${SITE_DOMAIN}`)"
       - "traefik.http.routers.${CONFIG_KEY}_nginx.tls=true"
       - "traefik.http.routers.${CONFIG_KEY}_nginx.tls.certresolver=le"
       - "traefik.http.services.${CONFIG_KEY}_nginx.loadbalancer.server.port=80"
