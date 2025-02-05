@@ -1,12 +1,12 @@
 FROM wordpress:php8.3-fpm-alpine
 
-RUN apk add --no-cache libpng libjpeg-turbo freetype nano libxml2 libxml2-dev zip libzip libzip-dev supercronic libcurl curl php-curl php-ftp
+RUN apk add --no-cache libpng libjpeg-turbo freetype nano libxml2 libxml2-dev zip libzip libzip-dev supercronic libcurl curl php-curl php-ftp php-xdebug
 
 RUN docker-php-ext-install zip opcache mysqli pdo pdo_mysql soap ftp
 
 RUN docker-php-ext-enable ftp
 
-COPY php/custom.ini /usr/local/etc/php/conf.d/custom.ini
+COPY php/*.ini /usr/local/etc/php/conf.d/
 COPY startup.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/startup.sh
 
@@ -18,6 +18,8 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 USER www-data
 
 RUN echo "* * * * * php -d open_basedir=/ -d disable_functions= /usr/local/bin/wp cron event run --due-now --path=/var/www/html" > /home/www-data/crontab
+#RUN echo "* * * * * php -d open_basedir=/ -d disable_functions= /usr/local/bin/wp transient delete -all --path=/var/www/html" > /home/www-data/crontab
+#RUN echo "* * * * * php -d open_basedir=/ -d disable_functions= /usr/local/bin/wp db optimize --path=/var/www/html" > /home/www-data/crontab
 
 WORKDIR /var/www/html
 
@@ -31,3 +33,5 @@ ENV CI_COMMIT_SHA $CI_COMMIT_SHA
 
 ENTRYPOINT ["startup.sh"]
 CMD ["php-fpm"]
+
+EXPOSE 9000 9003
