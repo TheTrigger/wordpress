@@ -9,6 +9,9 @@ Built over <https://hub.docker.com/_/wordpress>
 docker build -t wordpress:fpm .
 ```
 
+# passare un cazzo di ini alla wp cli
+da valutare: wp core update --ini=/path/to/your/custom.ini
+
 
 # Fixes
 

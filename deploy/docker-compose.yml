@@ -70,6 +70,22 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 
+  webdav:
+    image: registry.oibi.dev/webdav-docker/main:latest
+    restart: unless-stopped
+    volumes:
+      - wordpress_data:/var/www/webdav
+      - .htpasswd:/etc/nginx/.htpasswd:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.fs_webdav.rule=Host(`files.fs.demo.oibi.dev`)"
+      - "traefik.http.routers.fs_webdav.entrypoints=websecure"
+      - "traefik.http.routers.fs_webdav.tls.certresolver=myresolver"
+      - "traefik.http.services.fs_webdav.loadbalancer.server.port=8080"
+    networks:
+      - wordpress_network
+      - traefik_default
+
 
 volumes:
   wordpress_data:

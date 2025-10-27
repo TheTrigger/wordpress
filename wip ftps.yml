@@ -1,0 +1,33 @@
+
+
+  ftps:
+    image: delfer/alpine-ftp-server:latest
+    restart: unless-stopped
+    environment:
+      - PUBLICHOST=${SITE_DOMAIN}                  # Dominio per FTPS, es: wp2.demo.oibi.dev
+      - FTP_USER_NAME=admin                        # Nome utente FTPS
+      - FTP_USER_PASS=admin                        # Password FTPS
+      - FTP_NAME=admin                        # Nome utente FTPS
+      - FTP_PASS=admin                        # Password FTPS
+      - FTP_HOME=/home/ftpusers/admin/html    # Directory di destinazione
+      - ADDED_FLAGS=--tls=2                        # Attiva TLS (2: sia implicito che esplicito)
+    volumes:
+      - wordpress_data:/home/ftpusers/admin/html
+    labels:
+     - "traefik.enable=true"
+     - "traefik.tcp.routers.${CONFIG_KEY}_ftps.rule=HostSNI(`${SITE_DOMAIN}`, `www.${SITE_DOMAIN}`)"
+     - "traefik.tcp.routers.${CONFIG_KEY}_ftps.entrypoints=ftps"       # Usa l'entrypoint ftps (porta 21)
+     - "traefik.tcp.routers.${CONFIG_KEY}_ftps.tls=true"
+     - "traefik.tcp.routers.${CONFIG_KEY}_ftps.tls.certresolver=le"
+     - "traefik.tcp.services.${CONFIG_KEY}_ftps.loadbalancer.server.port=21"
+    networks:
+      - traefik_default
+
+
+
+
+# traefik richiede
+#      - '--entryPoints.ftps.address=0.0.0.0:21'
+
+# allo stato attuale telnet wp2.demo.oibi.dev si collega ftp wp2.demo.oibi.dev
+# su winscp non si collega
