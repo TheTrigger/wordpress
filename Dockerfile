@@ -11,6 +11,7 @@ RUN apk add --no-cache --virtual .build-deps libxml2-dev \
 
 COPY php/wpcli.ini /usr/local/etc/php/wpcli.ini
 COPY php/conf.d/custom.ini /usr/local/etc/php/conf.d/custom.ini
+COPY php/conf.d-wpcli/ /usr/local/etc/php/conf.d-wpcli/
 
 COPY startup.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/startup.sh
@@ -18,7 +19,7 @@ RUN chmod +x /usr/local/bin/startup.sh
 # Installazione di WP CLI
 RUN curl -fsSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp.phar \
 	&& chmod +x /usr/local/bin/wp.phar \
-	&& printf '#!/bin/sh\nexec php -c /usr/local/etc/php/wpcli.ini /usr/local/bin/wp.phar "$@"\n' > /usr/local/bin/wp \
+	&& printf '#!/bin/sh\nPHP_INI_SCAN_DIR=/usr/local/etc/php/conf.d:/usr/local/etc/php/conf.d-wpcli exec php -c /usr/local/etc/php/wpcli.ini /usr/local/bin/wp.phar "$@"\n' > /usr/local/bin/wp \
 	&& chmod +x /usr/local/bin/wp
 
 USER www-data

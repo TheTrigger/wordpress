@@ -14,6 +14,7 @@ services:
       - wordpress_data:/var/www/html
       - ./php/wpcli.ini:/usr/local/etc/php/wpcli.ini
       - ./php/conf.d/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+      - ./php/conf.d-wpcli:/usr/local/etc/php/conf.d-wpcli
     environment:
       WORDPRESS_DB_HOST: database
       WORDPRESS_DB_USER: wordpress
