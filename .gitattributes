@@ -1,0 +1,19 @@
+# Forza line endings LF per script shell e file di configurazione
+*.sh text eol=lf
+*.ini text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+Dockerfile text eol=lf
+.env text eol=lf
+
+# File binari
+*.phar binary
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
